@@ -217,54 +217,59 @@ void edita_funcionario(funcionario *funcionarios,size_t len){
         printf("Nao existe nenhum funcinario com esse numero!");
         return;
     }else{
-        funcionario funci;
-        do{
-            printf("Introduza o cargo do funcionario(1-> empregado, 2-> gerente, 3-> patrao): ");
-            scanf("%d",&(funci.cargo));
-            if(funci.cargo<1 || funci.cargo>3){
-                printf("Valor invalido!!\n");
-            }
-        }while(funci.cargo<1 || funci.cargo>3);
-        printf("Introduza o novo numero de telefone do funcionario: ");
-        scanf("%d",&(funci.telefone));
-        printf("Introduza o novo numero de filhos do funcionario: ");
-        scanf("%d",&(funci.filhos));
-        printf("Introduza o novo nome do funcionario: ");
-        scanf("%s",&(funci.nome));
-        printf("Introduza o novo estado civil do funcionario: ");
-        scanf("%s",&(funci.estado));
-        printf("Introduza o novo tempo de entrada na empresa do funcionario: ");
-        scanf("%s",&(funci.tempo_entrada));
-        printf("Introduza o novo tempo de saida na empresa do funcionario: ");
-        scanf("%s",&(funci.tempo_saida));
-        printf("Introduza o novo salario do funcionario: ");
-        scanf("%f",&(funci.salario));
-        printf("Introduza o novo subsidio de alimentacao do funcionario: ");
-        scanf("%f",&(funci.subsidio));
+        
+        if(funcionarios[funcIndex].eliminado!=1){
+            funcionario funci;
+            do{
+                printf("Introduza o cargo do funcionario(1-> empregado, 2-> gerente, 3-> patrao): ");
+                scanf("%d",&(funci.cargo));
+                if(funci.cargo<1 || funci.cargo>3){
+                    printf("Valor invalido!!\n");
+                }
+            }while(funci.cargo<1 || funci.cargo>3);
+            printf("Introduza o novo numero de telefone do funcionario: ");
+            scanf("%d",&(funci.telefone));
+            printf("Introduza o novo numero de filhos do funcionario: ");
+            scanf("%d",&(funci.filhos));
+            printf("Introduza o novo nome do funcionario: ");
+            scanf("%s",&(funci.nome));
+            printf("Introduza o novo estado civil do funcionario: ");
+            scanf("%s",&(funci.estado));
+            printf("Introduza o novo tempo de entrada na empresa do funcionario: ");
+            scanf("%s",&(funci.tempo_entrada));
+            printf("Introduza o novo tempo de saida na empresa do funcionario: ");
+            scanf("%s",&(funci.tempo_saida));
+            printf("Introduza o novo salario do funcionario: ");
+            scanf("%f",&(funci.salario));
+            printf("Introduza o novo subsidio de alimentacao do funcionario: ");
+            scanf("%f",&(funci.subsidio));
 
-        funcionarios[funcIndex].cargo = funci.cargo;
-        funcionarios[funcIndex].telefone = funci.telefone;    
-        funcionarios[funcIndex].filhos = funci.filhos;
-        strcpy(funcionarios[funcIndex].nome, funci.nome);
-        strcpy(funcionarios[funcIndex].estado, funci.estado);
-        strcpy(funcionarios[funcIndex].tempo_entrada, funci.tempo_entrada);
-        strcpy(funcionarios[funcIndex].tempo_saida, funci.tempo_saida);
-        funcionarios[funcIndex].salario = funci.salario;
-        funcionarios[funcIndex].subsidio = funci.subsidio;
+            funcionarios[funcIndex].cargo = funci.cargo;
+            funcionarios[funcIndex].telefone = funci.telefone;    
+            funcionarios[funcIndex].filhos = funci.filhos;
+            strcpy(funcionarios[funcIndex].nome, funci.nome);
+            strcpy(funcionarios[funcIndex].estado, funci.estado);
+            strcpy(funcionarios[funcIndex].tempo_entrada, funci.tempo_entrada);
+            strcpy(funcionarios[funcIndex].tempo_saida, funci.tempo_saida);
+            funcionarios[funcIndex].salario = funci.salario;
+            funcionarios[funcIndex].subsidio = funci.subsidio;
 
-        FILE *fp = fopen("./funcionarios.csv", "w");
-        if(fp==NULL){
-            fprintf(stderr, "Nao foi possivel abrir o ficheiro para escrita: %s\n",
-                    strerror(errno));
+            FILE *fp = fopen("./funcionarios.csv", "w");
+            if(fp==NULL){
+                fprintf(stderr, "Nao foi possivel abrir o ficheiro para escrita: %s\n",
+                        strerror(errno));
 
-            free(funcionarios);
-            return;
+                free(funcionarios);
+                return;
         } 
 
         
         imprime_funcionarios(funcionarios, len, fp);
         fclose(fp);
         free(funcionarios);
+        }else{
+            printf("Funcionario eliminado, nao é possivel editar!");
+        }
 
     }
 }
@@ -301,7 +306,35 @@ int funcNum;
 
 
 
-
+void lista_funcionarios(funcionario *funcionarios,size_t len){
+    for(size_t i=0; i<len;i++){
+        funcionario func = funcionarios[i]; 
+        printf("Informação do funcionario: \n");
+        printf("Codigo:                     %d;\n",func.codigo);
+        printf("Nome:                       %s;\n",func.nome);
+        if(func.cargo == 1){
+            printf("Cargo:                      Empregado;\n");
+        }else if(func.cargo == 2){
+            printf("Cargo:                      Gerente;\n");
+        }else if(func.cargo == 3){
+            printf("Cargo:                      Patrao;\n");
+        }
+        printf("Estado Civil:               %s;\n",func.estado);
+        printf("Numero de Filhos:           %d;\n",func.filhos);
+        printf("Nr telefone:                %d;\n",func.telefone);
+        printf("Data de entrada na empresa: %s;\n",func.tempo_entrada);
+        printf("Data de saida na empresa:   %s;\n",func.tempo_saida);
+        printf("Salario:                    %f;\n",func.salario);
+        printf("subsidio de alimentacao :   %f;\n",func.subsidio);
+        printf("Data de nascimento:         %s;\n",func.data_nascimento);
+        if(func.eliminado == 1){
+            printf("Estado do funcionario:      Eliminado;\n"); 
+        }else{
+            printf("Estado do funcionario:      No Sistema;\n"); 
+        }
+        printf("I######################################### \n");
+    }
+}
 
 
 int main(void){
@@ -315,7 +348,7 @@ int main(void){
 
     //PRINTS PARA A INTERFACE
     printf("Qual a operação a executar?\n");
-    printf("1-> Adicionar funcionario; \n2-> Consultar informação de funcionario\n3-> Editar Funcionario\n4-> Eliminar Funcionario\n");
+    printf("1-> Adicionar funcionario; \n2-> Consultar informação de funcionario\n3-> Editar Funcionario\n4-> Eliminar Funcionario\n5-> Listar Funcionarios\n");
     int opcao;
     scanf("%d",&opcao);
 
@@ -329,6 +362,8 @@ int main(void){
         edita_funcionario(funcionarios, funcionarios_len);
     }else if(opcao == 4){
         elimina_funcionario(funcionarios, funcionarios_len);
+    }else if(opcao == 5){
+        lista_funcionarios(funcionarios, funcionarios_len);
     }
     else{
         printf("Opçao invalida");
